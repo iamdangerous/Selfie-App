@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">My Selfie App</string>
+    <string name="title_activity_login">Login</string>
+    <string name="user_name">Username</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="create_acc">Create Account</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="cam_not_avail">Camera Not Available</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="picture">Picture</string>
+    <string name="stop">Stop</string>
+    <string name="record">Record</string>
+    <string name="permission_request">Thi app needs camera and audio permission</string>
+
+</resources>
