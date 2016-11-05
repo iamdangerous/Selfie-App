@@ -48,6 +48,7 @@ import com.android.rahul.myselfieapp.R;
 import com.android.rahul.myselfieapp.Views.AutoFitTextureView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -76,9 +77,6 @@ public class CamImageFragment extends Fragment
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-    /**
-     * Tag for the {@link Log}.
-     */
     private static final String TAG = "CamImageFragment";
 
     /**
@@ -826,6 +824,7 @@ public class CamImageFragment extends Fragment
                     showToast("Saved: " + mFile);
                     Log.d(TAG, mFile.toString());
                     unlockFocus();
+                    saveMedia("image.jpg");
                 }
             };
 
@@ -834,6 +833,23 @@ public class CamImageFragment extends Fragment
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+    }
+
+
+    void saveMedia(String fileName){
+
+        File file = new File(getContext().getFilesDir(), fileName);
+
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+//            fos.write(data);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+        }
+
     }
 
     /**

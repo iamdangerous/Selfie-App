@@ -3,6 +3,7 @@ package com.android.rahul.myselfieapp.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.android.rahul.myselfieapp.Fragment.BlankFragment;
 import com.android.rahul.myselfieapp.Fragment.CamImageFragment;
 import com.android.rahul.myselfieapp.R;
 import com.android.rahul.myselfieapp.Utility.Constants;
@@ -21,8 +22,8 @@ public class CameraActivity extends AppCompatActivity {
 
         if(camAvail){
             if (null == savedInstanceState) {
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.container, CamImageFragment.newInstance())
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, BlankFragment.newInstance())
                         .commit();
             }
         }
