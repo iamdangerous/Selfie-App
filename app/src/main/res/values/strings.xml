@@ -17,5 +17,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="take_pic">Take Pic</string>
+    <string name="entity">entity</string>
+    <string name="camera">Camera</string>
 
 </resources>

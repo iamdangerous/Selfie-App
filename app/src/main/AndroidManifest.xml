@@ -11,6 +11,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <uses-feature android:name="android.hardware.camera2.full" />
 
     <application
@@ -20,15 +21,18 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.MainActivity">
+        <service
+            android:name="com.kinvey.android.offline.KinveySyncService"
+            android:exported="true"
+            android:process=":backgroundsync">
+            <intent-filter>
+                <action android:name="com.kinvey.android.ACTION_OFFLINE_SYNC" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </service>
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+        <activity android:name=".Activity.MainActivity"></activity>
         <activity android:name=".Activity.BaseActivity" />
         <activity
             android:name=".Activity.LoginActivity"
@@ -49,9 +53,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.android.rahul.myselfieapp.Activity.LoginActivity" />
         </activity>
-        <activity android:name=".Activity.CameraActivity">
+        <activity
+            android:name=".Activity.CameraActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity android:name=".Activity.GalleryActivity" />
 
-        </activity>
+        <service
+            android:name=".Service.MyUploadService"
+            android:exported="false"/>
+        <provider
+            android:name=".Storage.generated.MediaProvider"
+            android:authorities="com.android.rahul.myselfieapp.storage.MediaProvider"
+            android:exported="false" />
+
     </application>
 
 </manifest>

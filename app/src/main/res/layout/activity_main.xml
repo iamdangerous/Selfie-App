@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -8,21 +8,54 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context="com.android.rahul.myselfieapp.Activity.MainActivity">
 
-    <android.support.v7.widget.AppCompatTextView
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.AppCompatEditText
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="id"
+    android:id="@+id/et_id" />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/textView" />
+        android:hint="text"
+        android:id="@+id/et_text" />
 
     <android.support.v7.widget.AppCompatButton
-        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Submit"
+        android:id="@+id/btn_submit" />
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Query"
+        android:id="@+id/btn_query" />
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Update"
+        android:id="@+id/btn_update" />
+
+
+    <android.support.v7.widget.AppCompatButton
+        android:text="@string/camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_toEndOf="@+id/textView"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="88dp"
         android:id="@+id/btn" />
-</RelativeLayout>
+    <android.support.v7.widget.AppCompatButton
+        android:text="show file names"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_show_file_names" />
+
+
+    <android.support.v7.widget.AppCompatButton
+        android:text="Gallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_gallery" />
+</LinearLayout>

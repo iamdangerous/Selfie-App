@@ -1,8 +1,11 @@
 package com.android.rahul.myselfieapp.Fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,24 +15,29 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.android.rahul.myselfieapp.Entity.UpdateEntity;
 import com.android.rahul.myselfieapp.R;
 import com.android.rahul.myselfieapp.Views.CameraPreview;
+import com.kinvey.java.LinkedResources.LinkedFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-
 
 public class BlankFragment extends Fragment {
     Camera camera;
     CameraPreview cameraPreview;
+
+    BlankFragmentListener mListener;
 
     @Bind(R.id.camera_preview)
     FrameLayout frameLayout;
@@ -73,21 +81,35 @@ public static BlankFragment newInstance() {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_blank, container, false);
         ButterKnife.bind(this,v);
-
+        openCamera();
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        openCamera();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        if(camera!=null)
+//            camera.stopPreview();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        if(camera!=null)
+//            camera.release();
     }
 
     void openCamera(){
          camera = getCameraInstance(getContext());
-        camera.setDisplayOrientation(90);
         if(null == camera)
             return;
+
+//        camera.setDisplayOrientation(90);
         Context context = getContext();
         if(null == context)
             return;
@@ -102,20 +124,28 @@ public static BlankFragment newInstance() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
 
-            String filename = "pic.jpg";
+//            String filename = "pic.jpg";
+
+            String filename="cam_"+ Build.MANUFACTURER+"_"+Build.PRODUCT
+                    +"_"+new SimpleDateFormat("yyyyMMdd'-'HHmmss").format(new Date());
+
+            filename=filename.replaceAll(" ", "_")+".jpg";
+
             File file = new File(getContext().getFilesDir(), filename);
 
+            Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);
 
-//            File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-//            if (pictureFile == null){
-//                Log.d(TAG, "Error creating media file, check storage permissions: " +
-//                        e.getMessage());
-//                return;
-//            }
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+
+            createEntity(data,filename);
 
             try {
                 FileOutputStream fos = new FileOutputStream(file);
-                fos.write(data);
+                bmp.compress(Bitmap.CompressFormat.WEBP,50,fos);
+                fos.flush();
+//                fos.write(data);
                 fos.close();
             } catch (FileNotFoundException e) {
                 Log.d(TAG, "File not found: " + e.getMessage());
@@ -125,6 +155,19 @@ public static BlankFragment newInstance() {
             camera.startPreview();
         }
     };
+
+
+    void createEntity(byte[] data, String filename){
+        UpdateEntity myLinkedEntity = new UpdateEntity();
+        myLinkedEntity.putFile("attachment", new LinkedFile(filename));
+        myLinkedEntity.getFile("attachment").setInput(new ByteArrayInputStream(data));
+
+//        saveEntity(myLinkedEntity);
+        mListener.saveEntity(myLinkedEntity);
+    }
+
+
+
 
     public static Camera getCameraInstance(Context context){
         Camera c = null;
@@ -141,22 +184,21 @@ public static BlankFragment newInstance() {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+        if (context instanceof BlankFragmentListener) {
+            mListener = (BlankFragmentListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-//        mListener = null;
+        mListener = null;
     }
 //
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
+    public interface BlankFragmentListener {
+        void saveEntity(UpdateEntity updateEntity);
+    }
 }
