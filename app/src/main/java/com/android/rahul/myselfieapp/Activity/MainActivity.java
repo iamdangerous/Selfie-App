@@ -59,17 +59,17 @@ public class MainActivity extends BaseActivity {
         showGalery();
     }
 
-    @OnClick(R.id.btn_gallery)
+    @OnClick(R.id.btn_save)
     void onClickSubmit(){
         saveData();
     }
 
-    @OnClick(R.id.btn_gallery)
+    @OnClick(R.id.btn_update)
     void onClickUpdate(){
         updateData();
     }
 
-    @OnClick(R.id.btn_gallery)
+    @OnClick(R.id.btn_query)
     void onClickQuery(){
         queryData();
     }

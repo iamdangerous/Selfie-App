@@ -11,7 +11,7 @@ import net.simonvt.schematic.annotation.TableEndpoint;
  * Created by rkrde on 07-11-2016.
  */
 @ContentProvider(authority = MediaProvider.AUTHORITY,
-        database = MediaProvider.class)
+        database = MediaDatabase.class)
 public  class MediaProvider {
     public static final String AUTHORITY = "com.android.rahul.myselfieapp.storage.MediaProvider";
 
