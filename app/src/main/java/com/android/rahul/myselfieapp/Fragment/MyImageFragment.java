@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.android.rahul.myselfieapp.Entity.UpdateEntity;
 import com.android.rahul.myselfieapp.R;
+import com.android.rahul.myselfieapp.Utility.Constants;
 import com.android.rahul.myselfieapp.Views.CameraPreview;
 import com.kinvey.java.LinkedResources.LinkedFile;
 
@@ -33,7 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class BlankFragment extends Fragment {
+public class MyImageFragment extends Fragment {
     Camera camera;
     CameraPreview cameraPreview;
 
@@ -56,11 +57,11 @@ public class BlankFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public BlankFragment() {
+    public MyImageFragment() {
         // Required empty public constructor
     }
-public static BlankFragment newInstance() {
-        BlankFragment fragment = new BlankFragment();
+public static MyImageFragment newInstance() {
+        MyImageFragment fragment = new MyImageFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -139,7 +140,8 @@ public static BlankFragment newInstance() {
             matrix.postRotate(90);
             bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 
-            createEntity(data,filename);
+//            createEntity(data,filename);
+            Constants.uploadMediaByteArray(getContext(),data,filename);
 
             try {
                 FileOutputStream fos = new FileOutputStream(file);

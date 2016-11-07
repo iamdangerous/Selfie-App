@@ -51,8 +51,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
             @Override
             public void onClick(View v) {
                 client.file().upload(file,uploaderProgressListener);
-
-
             }
         });
     }

@@ -19,5 +19,7 @@
     <string name="take_pic">Take Pic</string>
     <string name="entity">entity</string>
     <string name="camera">Camera</string>
+    <string name="start">Start</string>
+
 
 </resources>

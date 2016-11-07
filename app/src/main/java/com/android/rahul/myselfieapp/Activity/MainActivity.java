@@ -4,27 +4,17 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
 
-import com.android.rahul.myselfieapp.Entity.UpdateEntity;
-import com.android.rahul.myselfieapp.Fragment.BlankFragment;
 import com.android.rahul.myselfieapp.R;
 import com.android.rahul.myselfieapp.Storage.MediaColumns;
 import com.android.rahul.myselfieapp.Storage.MediaProvider;
-import com.android.rahul.myselfieapp.Utility.Constants;
 import com.kinvey.android.Client;
-import com.kinvey.android.callback.KinveyPingCallback;
-import com.kinvey.java.core.KinveyClientCallback;
-import com.kinvey.java.core.MediaHttpUploader;
-import com.kinvey.java.core.UploaderProgressListener;
-import com.kinvey.java.model.FileMetaData;
 
 import java.io.File;
-import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

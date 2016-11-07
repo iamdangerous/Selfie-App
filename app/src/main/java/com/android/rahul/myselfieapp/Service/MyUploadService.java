@@ -13,8 +13,16 @@ import com.kinvey.java.core.UploaderProgressListener;
 import com.kinvey.java.model.FileMetaData;
 
 import java.io.IOException;
+import java.security.PublicKey;
 
 public class MyUploadService extends IntentService {
+
+//    public static final int MEDIA_FILE = 1;
+//    public static final int  MEDIA_BYTE = 2;
+
+    public static final String COLLECTION_NAME = "Markets";
+
+
     Client mClient;
     String TAG = "MyUploadSrvice";
 
@@ -60,7 +68,7 @@ public class MyUploadService extends IntentService {
      * parameters.
      */
     private void handleActionFoo(final UpdateEntity entity) {
-        mClient.linkedData("Markets",UpdateEntity.class)
+        mClient.linkedData(COLLECTION_NAME,UpdateEntity.class)
                 .save(entity, new KinveyClientCallback<UpdateEntity>() {
                     @Override
                     public void onSuccess(UpdateEntity updateEntity) {

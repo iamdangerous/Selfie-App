@@ -19,4 +19,8 @@ public interface MediaColumns {
 
     @DataType(TEXT) @NotNull
     String _PATH = "path";
+
+    @DataType(INTEGER) @NotNull
+    String _UPLOAD_STATUS = "upload_status";
+
 }

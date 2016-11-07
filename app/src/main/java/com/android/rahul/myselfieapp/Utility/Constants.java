@@ -5,7 +5,15 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.widget.Toast;
 
+import com.android.rahul.myselfieapp.Entity.UpdateEntity;
 import com.android.rahul.myselfieapp.R;
+import com.android.rahul.myselfieapp.Service.MyUploadService;
+import com.google.common.io.Files;
+import com.kinvey.java.LinkedResources.LinkedFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by rkrde on 03-11-2016.
@@ -39,6 +47,24 @@ public class Constants {
 
     public static void showAwesomeToast(Context context,String str){
         Toast.makeText(context,str,Toast.LENGTH_SHORT).show();
+    }
+
+
+    public static void uploadMediaFile(Context context, File file, String fileName){
+        try {
+            byte data[] = Files.toByteArray(file);
+            uploadMediaByteArray(context,data,fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void uploadMediaByteArray(Context context,byte data[],String fileName){
+        UpdateEntity entity = new UpdateEntity();
+        entity.putFile("attachment", new LinkedFile(fileName));
+        entity.getFile("attachment").setInput(new ByteArrayInputStream(data));
+        MyUploadService.startActionUpload(context,entity);
     }
 
 }
