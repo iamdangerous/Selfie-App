@@ -3,6 +3,7 @@ package com.android.rahul.myselfieapp.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
@@ -15,6 +16,7 @@ import com.android.rahul.myselfieapp.Storage.MediaProvider;
 import com.kinvey.android.Client;
 
 import java.io.File;
+import java.net.URI;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,6 +30,8 @@ public class MainActivity extends BaseActivity {
     AppCompatEditText etId;
     @Bind(R.id.et_text)
     AppCompatEditText etText;
+    @Bind(R.id.et_status)
+    AppCompatEditText etStatus;
 
 
     private static final String TAG = "MainActivity";
@@ -65,23 +69,44 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    String projection []={ MediaColumns._ID,MediaColumns._PATH};
+    String projection []={ MediaColumns._ID,MediaColumns._PATH,MediaColumns._UPLOAD_STATUS};
 
     void saveData(){
         String id = etId.getText().toString();
         String text = etText.getText().toString();
+        int status = Integer.parseInt(etStatus.getText().toString());
+
 
         ContentValues cv = new ContentValues();
         cv.put(MediaColumns._ID, id);
         cv.put(MediaColumns._PATH, text);
+        cv.put(MediaColumns._UPLOAD_STATUS, status);
+
 
         Uri insertUri = getContentResolver().insert(MediaProvider.MediaLists.CONTENT_URI, cv);
         Log.d(TAG,"new InsertUri:"+insertUri);
+
+
     }
 
     void updateData(){
         String id = etId.getText().toString();
         String text = etText.getText().toString();
+        int status = Integer.parseInt(etStatus.getText().toString());
+
+        long _id = Long.parseLong(id);
+        Uri uri = MediaProvider.MediaLists.withId(_id);
+        ContentValues cv  = new ContentValues();
+        cv.put(MediaColumns._ID, id);
+        cv.put(MediaColumns._PATH, text);
+        cv.put(MediaColumns._UPLOAD_STATUS, status);
+
+
+        String where  = MediaColumns._ID +"= ?";
+        String selectionArgs[] = {id};
+        int rowsUpdated = getContentResolver().update(uri,cv,where,selectionArgs);
+
+        Log.d(TAG,"rowsUpdated:"+rowsUpdated);
     }
     void queryData(){
         String id = etId.getText().toString();
@@ -94,7 +119,9 @@ public class MainActivity extends BaseActivity {
 
                 String mId = cursor.getString(cursor.getColumnIndex(MediaColumns._ID));
                 String mPath = cursor.getString(cursor.getColumnIndex(MediaColumns._PATH));
-                Log.d(TAG,"Query: mId:"+mId+",mPath:"+mPath);
+                int mStatus = cursor.getInt(cursor.getColumnIndex(MediaColumns._UPLOAD_STATUS));
+
+                Log.d(TAG,"Query: mId:"+mId+",mPath:"+mPath+",status:"+mStatus);
             } while (cursor.moveToNext());
         }
         cursor.close();

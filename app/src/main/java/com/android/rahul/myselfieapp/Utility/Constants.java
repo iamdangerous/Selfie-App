@@ -1,14 +1,22 @@
 package com.android.rahul.myselfieapp.Utility;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.rahul.myselfieapp.Entity.UpdateEntity;
 import com.android.rahul.myselfieapp.R;
 import com.android.rahul.myselfieapp.Service.MyUploadService;
+import com.android.rahul.myselfieapp.Storage.MediaColumns;
+import com.android.rahul.myselfieapp.Storage.MediaProvider;
 import com.google.common.io.Files;
+import com.kinvey.android.Client;
 import com.kinvey.java.LinkedResources.LinkedFile;
 
 import java.io.ByteArrayInputStream;
@@ -50,21 +58,64 @@ public class Constants {
     }
 
 
-    public static void uploadMediaFile(Context context, File file, String fileName){
+    public static void uploadMediaFile(Context context, File file, String fileName,Client client){
         try {
             byte data[] = Files.toByteArray(file);
-            uploadMediaByteArray(context,data,fileName);
+            uploadMediaByteArray(context,data,fileName,client);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    public static void uploadMediaByteArray(Context context,byte data[],String fileName){
-        UpdateEntity entity = new UpdateEntity();
-        entity.putFile("attachment", new LinkedFile(fileName));
-        entity.getFile("attachment").setInput(new ByteArrayInputStream(data));
-        MyUploadService.startActionUpload(context,entity);
+    public static void uploadMediaByteArray(Context context, byte data[], String fileName, Client client){
+
+        //Insertion
+        int status = 0;//fail
+        ContentValues cv = new ContentValues();
+        cv.put(MediaColumns._PATH, fileName);
+        cv.put(MediaColumns._UPLOAD_STATUS, status);
+        Uri insertUri = context.getContentResolver().insert(MediaProvider.MediaLists.CONTENT_URI, cv);
+        Log.d("uploadNedia","new InsertUri:"+insertUri);
+
+        if(isNetWork(context)){
+//            UpdateEntity entity = new UpdateEntity();
+//            entity.putFile("attachment", new LinkedFile(fileName));
+//            entity.getFile("attachment").setInput(new ByteArrayInputStream(data));
+            MyUploadService.startActionUpload(context,data,insertUri,fileName,client);
+        }
+
     }
 
+    public static boolean isNetWork(Context context){
+        //Check Internet
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
+
+    public static void updateUploadStatus(Context context, Uri uri, int status){
+//        String id = etId.getText().toString();
+        String uriPath = uri.getPath(); //      /media/10
+        String id = uriPath.substring(6); //    10
+                //        int status = Integer.parseInt(etStatus.getText().toString());
+
+//        long _id = Long.parseLong(id);
+//        Uri uri = MediaProvider.MediaLists.withId(_id);
+        ContentValues cv  = new ContentValues();
+//        cv.put(MediaColumns._ID, id);
+//        cv.put(MediaColumns._PATH, text);
+        cv.put(MediaColumns._UPLOAD_STATUS, status);
+
+
+        String where  = MediaColumns._ID +"= ?";
+        String selectionArgs[] = {id};
+        int rowsUpdated = context.getContentResolver().update(uri,cv,where,selectionArgs);
+
+        Log.d("setUploadStatus: ","rowsUpdated:"+rowsUpdated);
+    }
 }

@@ -30,7 +30,7 @@ public class CameraActivity extends BaseActivity implements
         if(camAvail){
             if (null == savedInstanceState) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, VideoFragment.newInstance())
+                        .replace(R.id.container, MyImageFragment.newInstance())
                         .commit();
             }
         }
@@ -52,10 +52,13 @@ public class CameraActivity extends BaseActivity implements
 
 
     @Override
-    public void saveEntity(UpdateEntity updateEntity) {
-        Intent msgIntent = new Intent(this, MyUploadService.class);
-        msgIntent.putExtra(getString(R.string.entity), updateEntity);
-        startService(msgIntent);
+    public void uploadMediaImage(byte[] data,String fileName) {
+//        Intent msgIntent = new Intent(this, MyUploadService.class);
+//        msgIntent.putExtra(getString(R.string.entity), updateEntity);
+//        startService(msgIntent);
+//        MyUploadService myUploadService = new MyUploadService(mClient);
+        MyUploadService myUploadService = new MyUploadService(mClient);
+        Constants.uploadMediaByteArray(getApplicationContext(),data,fileName,mClient);
     }
 
 }

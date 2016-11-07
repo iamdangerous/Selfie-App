@@ -141,7 +141,8 @@ public static MyImageFragment newInstance() {
             bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 
 //            createEntity(data,filename);
-            Constants.uploadMediaByteArray(getContext(),data,filename);
+            mListener.uploadMediaImage(data,filename);
+//            Constants.uploadMediaByteArray(getContext(),data,filename);
 
             try {
                 FileOutputStream fos = new FileOutputStream(file);
@@ -164,8 +165,8 @@ public static MyImageFragment newInstance() {
         myLinkedEntity.putFile("attachment", new LinkedFile(filename));
         myLinkedEntity.getFile("attachment").setInput(new ByteArrayInputStream(data));
 
-//        saveEntity(myLinkedEntity);
-        mListener.saveEntity(myLinkedEntity);
+//        uploadMediaImage(myLinkedEntity);
+//        mListener.uploadMediaImage(myLinkedEntity);
     }
 
 
@@ -201,6 +202,6 @@ public static MyImageFragment newInstance() {
     }
 //
     public interface BlankFragmentListener {
-        void saveEntity(UpdateEntity updateEntity);
+        void uploadMediaImage(byte data[],String fileName);
     }
 }
