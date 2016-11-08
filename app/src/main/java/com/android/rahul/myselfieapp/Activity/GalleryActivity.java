@@ -1,5 +1,6 @@
 package com.android.rahul.myselfieapp.Activity;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,6 +10,7 @@ import android.util.Log;
 
 import com.android.rahul.myselfieapp.Adapter.GalleryAdapter;
 import com.android.rahul.myselfieapp.R;
+import com.android.rahul.myselfieapp.Utility.FileUtility;
 import com.kinvey.android.Client;
 
 import java.io.File;
@@ -35,7 +37,7 @@ public class GalleryActivity extends BaseActivity {
 //        if(null == savedInstanceState){
 //            fileList =  loadFile();
 //        }
-        fileList = loadFile();
+        fileList = FileUtility.loadFile(getApplicationContext());
 
         setAdapter();
 
@@ -49,22 +51,4 @@ public class GalleryActivity extends BaseActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    private List<File> loadFile(){
-        List<File> mFileList = new ArrayList<>();
-        File fileDir = getFilesDir();
-        File[] fileArray = fileDir.listFiles();
-        int i=0;
-        while (i<fileArray.length){
-            File file = fileArray[i];
-            String fileName = file.getName();
-            Log.d("File name=",fileName);
-
-            if(fileName.startsWith("cam")){
-                mFileList.add(file);
-            }
-            ++i;
-        }
-        return mFileList;
-
-    }
 }

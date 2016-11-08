@@ -101,7 +101,7 @@ public class Constants {
     public static void updateUploadStatus(Context context, Uri uri, int status){
 //        String id = etId.getText().toString();
         String uriPath = uri.getPath(); //      /media/10
-        String id = uriPath.substring(6); //    10
+        String id = uriPath.substring(7); //    10
                 //        int status = Integer.parseInt(etStatus.getText().toString());
 
 //        long _id = Long.parseLong(id);

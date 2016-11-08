@@ -47,24 +47,48 @@
         android:layout_height="wrap_content"
         android:hint="Update" />
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:text="@string/camera" />
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/camera" />
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn_show_file_names"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="show file names" />
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_show_file_names"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="show file names" />
 
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn_gallery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gallery" />
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gallery" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_media_from_kinvey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Media from kinvey" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_sign_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_out" />
+
+    </LinearLayout>
+
 </LinearLayout>

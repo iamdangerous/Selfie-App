@@ -8,7 +8,9 @@ import android.util.Log;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by rkrde on 07-11-2016.
@@ -67,4 +69,42 @@ public class FileUtility {
 //
 //        return mediaFile;
     }
+
+    public static List<File> loadFile(Context context){
+        List<File> mFileList = new ArrayList<>();
+        File fileDir = context.getFilesDir();
+        File[] fileArray = fileDir.listFiles();
+        int i=0;
+        while (i<fileArray.length){
+            File file = fileArray[i];
+            String fileName = file.getName();
+            Log.d("File name=",fileName);
+
+            if(fileName.startsWith("cam")){
+                mFileList.add(file);
+            }
+            ++i;
+        }
+        return mFileList;
+
+    }
+
+    public static void deleteMediaFiles(Context context){
+        File fileDir = context.getFilesDir();
+        File[] fileArray = fileDir.listFiles();
+        int i=0;
+        while (i<fileArray.length){
+            File file = fileArray[i];
+            String fileName = file.getName();
+            Log.d("File name=",fileName);
+
+            if(fileName.startsWith("cam")){
+                file.delete();
+            }
+            ++i;
+        }
+
+    }
+
+
 }
