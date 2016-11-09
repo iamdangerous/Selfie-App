@@ -31,6 +31,11 @@ public class Constants {
 
     public static final String API_KEY = "kid_S1w5ugKlg";
     public static final String APP_SECRET = "be2cfa240e9c48bb97cbb24bbd9f9c10";
+    public static final String COLLECTION = "Markets";
+    public static final String DOWNLOAD_URL = "_downloadURL";
+    public static final String FILE_NAME = "_filename";
+
+
 
     public static boolean checkCameraHardware(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){

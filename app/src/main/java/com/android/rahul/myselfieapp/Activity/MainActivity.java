@@ -9,13 +9,25 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
 
+import com.android.rahul.myselfieapp.Entity.UpdateEntity;
 import com.android.rahul.myselfieapp.R;
 import com.android.rahul.myselfieapp.Storage.MediaColumns;
 import com.android.rahul.myselfieapp.Storage.MediaProvider;
+import com.android.rahul.myselfieapp.Utility.Constants;
 import com.android.rahul.myselfieapp.Utility.FileUtility;
+import com.kinvey.android.AsyncAppData;
+import com.kinvey.android.AsyncLinkedData;
 import com.kinvey.android.Client;
+import com.kinvey.android.callback.KinveyListCallback;
+import com.kinvey.java.LinkedResources.LinkedGenericJson;
+import com.kinvey.java.cache.CachePolicy;
+import com.kinvey.java.cache.InMemoryLRUCache;
+import com.kinvey.java.core.DownloaderProgressListener;
+import com.kinvey.java.core.KinveyClientCallback;
+import com.kinvey.java.core.MediaHttpDownloader;
 
 import java.io.File;
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -69,7 +81,7 @@ public class MainActivity extends BaseActivity {
 
     @OnClick(R.id.btn_media_from_kinvey)
     void onClickMediaFromKinvey() {
-        getKinveyMedia();
+        getKinveyEntity();
     }
 
     @OnClick(R.id.btn_sign_out)
@@ -98,28 +110,85 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    void getKinveyMedia() {
+    void getKinveyEntity() {
 
+        AsyncAppData<UpdateEntity> entityAsyncAppData = mKinveyClient.appData(Constants.COLLECTION, UpdateEntity.class);
+        entityAsyncAppData.setCache(new InMemoryLRUCache(), CachePolicy.CACHEFIRST);
+        entityAsyncAppData.get(new KinveyListCallback<UpdateEntity>() {
+            @Override
+            public void onSuccess(UpdateEntity[] updateEntities) {
+                Log.v("TAG", "received " + updateEntities.length + " events");
+
+                int length = updateEntities.length;
+                for (int i = 0; i < updateEntities.length; ++i) {
+                    String entityId = String.valueOf(updateEntities[i].get("_id"));
+//                    downloadMedia(entityId);
+                    String donloadUrl = (String.valueOf(((LinkedGenericJson) updateEntities[i].get("attachment")).get(Constants.DOWNLOAD_URL)));
+                    String fileName = (String.valueOf(((LinkedGenericJson) updateEntities[i].get("attachment")).get(Constants.FILE_NAME)));
+                    Log.v("TAG", "downloadUrl " + donloadUrl + ",fileName:" + fileName);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.e("TAG", "failed to fetch all", throwable);
+            }
+        });
     }
 
-    void performSignOut(){
+
+    void downloadMedia(String entityId) {
+        AsyncLinkedData<UpdateEntity> asyncLinkedData = mKinveyClient.linkedData(Constants.COLLECTION, UpdateEntity.class);
+        asyncLinkedData.setCache(new InMemoryLRUCache(), CachePolicy.CACHEFIRST);
+        asyncLinkedData.getEntity(entityId, new KinveyClientCallback<UpdateEntity>() {
+            @Override
+            public void onSuccess(UpdateEntity updateEntity) {
+                Log.d(TAG, " downloadMedia :success: entity:" + updateEntity.get("_id"));
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.d(TAG, " downloadMedia :fail" + throwable.getMessage());
+
+            }
+        }, new DownloaderProgressListener() {
+            @Override
+            public void progressChanged(MediaHttpDownloader mediaHttpDownloader) throws IOException {
+
+            }
+
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, " DownloaderProgressListener success");
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.d(TAG, " DownloaderProgressListener fail");
+            }
+        });
+    }
+
+    void performSignOut() {
         mKinveyClient.user().logout().execute();
         clearStorage();
         showLoginScreen();
 
+
     }
 
-    void clearStorage(){
+    void clearStorage() {
         //empty Db
         Uri uri = MediaProvider.MediaLists.CONTENT_URI;
-        int rowsDeleted = getContentResolver().delete(uri,null,null);
-        Log.d(TAG,"rowsDeleted:"+rowsDeleted);
+        int rowsDeleted = getContentResolver().delete(uri, null, null);
+        Log.d(TAG, "rowsDeleted:" + rowsDeleted);
         //empty images and Videos
         FileUtility.deleteMediaFiles(getApplicationContext());
     }
 
-    void showLoginScreen(){
-        Intent intent = new Intent(this,LoginActivity.class);
+    void showLoginScreen() {
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finishAffinity();
     }
