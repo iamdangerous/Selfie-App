@@ -136,38 +136,36 @@ public class Constants {
         Uri uri = MediaProvider.MediaLists.CONTENT_URI;
         String mProjection[] = {MediaColumns._ID,MediaColumns._KINVEY_ID};
         String mSelection = MediaColumns._KINVEY_ID +" = ?";
-
-        for(int i=0;i<list.size();++i){
+        Log.d("List Size=",list.size()+"");
+        for(int i=0;i<list.size();){
             String kinveyId = list.get(i).get(Constants.KINVEY_ID);
             String mSelectionArgs[] = {kinveyId};
-            Log.d("Input KinveyId",kinveyId);
+            Log.d("Input KinveyId",kinveyId+",i="+i);
             Cursor cursor =context.getContentResolver().query(uri,null,mSelection,mSelectionArgs,null);
             int colCount = cursor.getColumnCount();
 
-//            int mId = cursor.getInt(0);
-//            String mKinveyId = cursor.getString(1);
-//
-//            Log.d("Column Name","[0]:"+cursor.getColumnName(0)+",[1]:"+cursor.getColumnName(1));
-//            Log.d("--->","mId:"+mId+",mKinveyId:"+mKinveyId);
 
             if(cursor.moveToFirst()){
                 Log.d("Hello","111");
+                Log.i("File list:","kinveyId:"+kinveyId+",i="+i);
+
+                //insert
+                String fileName = list.get(i).get(Constants.FILE_NAME);
+                Log.wtf("File Removed:","kinveyId:"+kinveyId+",fileName:"+fileName);
+                list.remove(i);
+
             }else {
                 Log.d("Hello","222");
+                ++i;
             }
             cursor.close();
 
-
-            Log.i("File list:","kinveyId:"+kinveyId+",cursor col:"+colCount);
-//            if(colCount>1){
-//                //insert
-//                String fileName = list.get(i).get(Constants.FILE_NAME);
-//                Log.wtf("File Removed:","kinveyId:"+kinveyId+",fileName:"+fileName);
-//                list.remove(i);
-//            }
+        }
+        if(list.size()>0){
+            Log.wtf("bulk insert :","List size:"+list.size());
+            bulkInsertMedia(context,list);
         }
 
-//        bulkInsertMedia(context,list);
 
 
     }
