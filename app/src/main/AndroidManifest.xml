@@ -55,8 +55,11 @@
                 android:value="com.android.rahul.myselfieapp.Activity.LoginActivity" />
         </activity>
         <activity
-            android:name=".Activity.CameraActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name=".Activity.CameraActivity"></activity>
+
+
         <activity android:name=".Activity.GalleryActivity" />
 
         <service

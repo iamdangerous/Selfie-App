@@ -1,13 +1,15 @@
 package com.android.rahul.myselfieapp.Fragment;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatButton;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,10 +44,20 @@ public class VideoFragment extends Fragment {
     CameraPreview cameraPreview;
     private boolean isRecording = false;
 
+    VideoFragmentListener mListener;
+
+
     @Bind(R.id.camera_preview)
     FrameLayout frameLayout;
 
-    @Bind(R.id.btn_capture)    AppCompatButton btnCapture;
+    @Bind(R.id.btn_capture)
+    FloatingActionButton btnCapture;
+
+
+    @OnClick(R.id.btn_camera)
+    void onClickCamera(){
+        mListener.showCameraFragment();
+    }
 
 
     @OnClick(R.id.btn_capture)
@@ -58,7 +70,8 @@ public class VideoFragment extends Fragment {
             camera.lock();         // take camera access back from MediaRecorder
 
             // inform the user that recording has stopped
-            btnCapture.setText(getString(R.string.start));
+//            btnCapture.setText(getString(R.string.start));
+            btnCapture.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.colorAccent));
             isRecording = false;
         }else {
             if (prepareVideoRecorder()) {
@@ -67,7 +80,9 @@ public class VideoFragment extends Fragment {
                 mediaRecorder.start();
 
                 // inform the user that recording has started
-                btnCapture.setText(getString(R.string.stop));
+//                btnCapture.setText(getString(R.string.stop));
+                btnCapture.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.colorPrimaryDark));
+
                 isRecording = true;
             } else {
                 // prepare didn't work, release the camera
@@ -108,10 +123,18 @@ public class VideoFragment extends Fragment {
         if (null == context)
             return false;
 
+        setCameraOrientation(camera);
+
         cameraPreview = new CameraPreview(context, camera);
         frameLayout.addView(cameraPreview);
 
         return true;
+    }
+
+    void setCameraOrientation(Camera camera) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            camera.setDisplayOrientation(90);
+        }
     }
 
     @Override
@@ -194,5 +217,26 @@ public class VideoFragment extends Fragment {
     void releaseMediaRecorder() {
         if(mediaRecorder!=null)
             mediaRecorder.release();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof VideoFragmentListener) {
+            mListener = (VideoFragmentListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+    //
+    public interface VideoFragmentListener {
+        void showCameraFragment();
     }
 }

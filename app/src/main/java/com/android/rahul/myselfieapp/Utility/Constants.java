@@ -87,9 +87,6 @@ public class Constants {
         Log.d("uploadNedia","new InsertUri:"+insertUri);
 
         if(isNetWork(context)){
-//            UpdateEntity entity = new UpdateEntity();
-//            entity.putFile("attachment", new LinkedFile(fileName));
-//            entity.getFile("attachment").setInput(new ByteArrayInputStream(data));
             MyUploadService.startActionUpload(context,data,insertUri,fileName,client);
         }
 
@@ -107,19 +104,11 @@ public class Constants {
     }
 
     public static void updateUploadStatus(Context context, Uri uri, int status){
-//        String id = etId.getText().toString();
         String uriPath = uri.getPath(); //      /media/10
         String id = uriPath.substring(7); //    10
-                //        int status = Integer.parseInt(etStatus.getText().toString());
 
-//        long _id = Long.parseLong(id);
-//        Uri uri = MediaProvider.MediaLists.withId(_id);
         ContentValues cv  = new ContentValues();
-//        cv.put(MediaColumns._ID, id);
-//        cv.put(MediaColumns._PATH, text);
         cv.put(MediaColumns._UPLOAD_STATUS, status);
-
-
         String where  = MediaColumns._ID +"= ?";
         String selectionArgs[] = {id};
         int rowsUpdated = context.getContentResolver().update(uri,cv,where,selectionArgs);
@@ -145,25 +134,40 @@ public class Constants {
     public static void smartBulkInsert(Context context,List<ArrayMap<String, String>> list)
     {
         Uri uri = MediaProvider.MediaLists.CONTENT_URI;
-        String mProjection[] = {MediaColumns._PATH};
-        String mSelection = MediaColumns._KINVEY_ID +" =?";
+        String mProjection[] = {MediaColumns._ID,MediaColumns._KINVEY_ID};
+        String mSelection = MediaColumns._KINVEY_ID +" = ?";
 
         for(int i=0;i<list.size();++i){
             String kinveyId = list.get(i).get(Constants.KINVEY_ID);
             String mSelectionArgs[] = {kinveyId};
+            Log.d("Input KinveyId",kinveyId);
             Cursor cursor =context.getContentResolver().query(uri,null,mSelection,mSelectionArgs,null);
             int colCount = cursor.getColumnCount();
-            cursor.close();
-            Log.i("File list:","kinveyId:"+kinveyId);
-            if(colCount>1){
-                //insert
-                String fileName = list.get(i).get(Constants.FILE_NAME);
-                Log.wtf("File Removed:","kinveyId:"+kinveyId+",fileName:"+fileName);
-                list.remove(i);
+
+//            int mId = cursor.getInt(0);
+//            String mKinveyId = cursor.getString(1);
+//
+//            Log.d("Column Name","[0]:"+cursor.getColumnName(0)+",[1]:"+cursor.getColumnName(1));
+//            Log.d("--->","mId:"+mId+",mKinveyId:"+mKinveyId);
+
+            if(cursor.moveToFirst()){
+                Log.d("Hello","111");
+            }else {
+                Log.d("Hello","222");
             }
+            cursor.close();
+
+
+            Log.i("File list:","kinveyId:"+kinveyId+",cursor col:"+colCount);
+//            if(colCount>1){
+//                //insert
+//                String fileName = list.get(i).get(Constants.FILE_NAME);
+//                Log.wtf("File Removed:","kinveyId:"+kinveyId+",fileName:"+fileName);
+//                list.remove(i);
+//            }
         }
 
-        bulkInsertMedia(context,list);
+//        bulkInsertMedia(context,list);
 
 
     }
