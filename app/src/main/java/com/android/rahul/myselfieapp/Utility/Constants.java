@@ -3,6 +3,7 @@ package com.android.rahul.myselfieapp.Utility;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.hardware.Camera;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,6 +16,7 @@ import com.android.rahul.myselfieapp.R;
 import com.android.rahul.myselfieapp.Service.MyUploadService;
 import com.android.rahul.myselfieapp.Storage.MediaColumns;
 import com.android.rahul.myselfieapp.Storage.MediaProvider;
+import com.google.api.client.util.ArrayMap;
 import com.google.common.io.Files;
 import com.kinvey.android.Client;
 import com.kinvey.java.LinkedResources.LinkedFile;
@@ -22,6 +24,7 @@ import com.kinvey.java.LinkedResources.LinkedFile;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by rkrde on 03-11-2016.
@@ -34,7 +37,7 @@ public class Constants {
     public static final String COLLECTION = "Markets";
     public static final String DOWNLOAD_URL = "_downloadURL";
     public static final String FILE_NAME = "_filename";
-
+    public static final String KINVEY_ID = "_kiinvey_id";
 
 
     public static boolean checkCameraHardware(Context context) {
@@ -122,5 +125,77 @@ public class Constants {
         int rowsUpdated = context.getContentResolver().update(uri,cv,where,selectionArgs);
 
         Log.d("setUploadStatus: ","rowsUpdated:"+rowsUpdated);
+    }
+
+    public static boolean isDbEmpty(Context context)
+    {
+        String[] projection = {MediaColumns._PATH};
+        Uri uri = MediaProvider.MediaLists.CONTENT_URI;
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+
+    }
+
+    public static void smartBulkInsert(Context context,List<ArrayMap<String, String>> list)
+    {
+        Uri uri = MediaProvider.MediaLists.CONTENT_URI;
+        String mProjection[] = {MediaColumns._PATH};
+        String mSelection = MediaColumns._KINVEY_ID +" =?";
+
+        for(int i=0;i<list.size();++i){
+            String kinveyId = list.get(i).get(Constants.KINVEY_ID);
+            String mSelectionArgs[] = {kinveyId};
+            Cursor cursor =context.getContentResolver().query(uri,null,mSelection,mSelectionArgs,null);
+            int colCount = cursor.getColumnCount();
+            cursor.close();
+            Log.i("File list:","kinveyId:"+kinveyId);
+            if(colCount>1){
+                //insert
+                String fileName = list.get(i).get(Constants.FILE_NAME);
+                Log.wtf("File Removed:","kinveyId:"+kinveyId+",fileName:"+fileName);
+                list.remove(i);
+            }
+        }
+
+        bulkInsertMedia(context,list);
+
+
+    }
+
+    public static void bulkInsertMedia(Context context, List<ArrayMap<String, String>> list)
+    {
+        Uri uri = MediaProvider.MediaLists.CONTENT_URI;
+        ContentValues[] contentValues = new ContentValues[list.size()];
+
+        for(int i=0;i<list.size();++i)
+        {
+
+            String kinveyId = list.get(i).get(Constants.KINVEY_ID);
+            String downloadUrl = list.get(i).get(Constants.DOWNLOAD_URL);
+            String fileName = list.get(i).get(Constants.FILE_NAME);
+            int fromKinvey = 1;
+            int uploadStatus = -1;
+            int downloadStatus = 0;
+
+
+
+
+            contentValues[i] = new ContentValues();
+            contentValues[i].put(MediaColumns._UPLOAD_STATUS,uploadStatus);
+            contentValues[i].put(MediaColumns._PATH,fileName);
+            contentValues[i].put(MediaColumns._URL,downloadUrl);
+            contentValues[i].put(MediaColumns._DOWN_STATUS,downloadStatus);
+            contentValues[i].put(MediaColumns._FROM_KINVEY,fromKinvey);
+            contentValues[i].put(MediaColumns._KINVEY_ID,kinveyId);
+
+        }
+        int rowsInserted = context.getContentResolver().bulkInsert(uri,contentValues);
+        Log.d("Constants:","bulkInsert New Rows Inserted:"+rowsInserted);
     }
 }

@@ -15,6 +15,7 @@ import com.android.rahul.myselfieapp.Storage.MediaColumns;
 import com.android.rahul.myselfieapp.Storage.MediaProvider;
 import com.android.rahul.myselfieapp.Utility.Constants;
 import com.android.rahul.myselfieapp.Utility.FileUtility;
+import com.google.api.client.util.ArrayMap;
 import com.kinvey.android.AsyncAppData;
 import com.kinvey.android.AsyncLinkedData;
 import com.kinvey.android.Client;
@@ -28,6 +29,8 @@ import com.kinvey.java.core.MediaHttpDownloader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -120,13 +123,34 @@ public class MainActivity extends BaseActivity {
                 Log.v("TAG", "received " + updateEntities.length + " events");
 
                 int length = updateEntities.length;
+                List<ArrayMap<String,String>> list = new ArrayList<ArrayMap<String, String>>();
                 for (int i = 0; i < updateEntities.length; ++i) {
                     String entityId = String.valueOf(updateEntities[i].get("_id"));
-//                    downloadMedia(entityId);
-                    String donloadUrl = (String.valueOf(((LinkedGenericJson) updateEntities[i].get("attachment")).get(Constants.DOWNLOAD_URL)));
-                    String fileName = (String.valueOf(((LinkedGenericJson) updateEntities[i].get("attachment")).get(Constants.FILE_NAME)));
-                    Log.v("TAG", "downloadUrl " + donloadUrl + ",fileName:" + fileName);
+                    ArrayMap<String,String> arrayMap =(ArrayMap<String, String>) updateEntities[i].get("attachment");
+                    String downloadUrl  = arrayMap.get(Constants.DOWNLOAD_URL);
+                    String fileName = arrayMap.get(Constants.FILE_NAME);
+                    String kinveyId = entityId;
+
+                    Log.v("TAG", "downloadUrl " + downloadUrl + ",fileName:" + fileName);
+                    ArrayMap<String,String> arrayMap1 = new ArrayMap<String, String>();
+                    arrayMap1.add(Constants.DOWNLOAD_URL,downloadUrl);
+                    arrayMap1.add(Constants.FILE_NAME,fileName);
+                    arrayMap1.add(Constants.KINVEY_ID,kinveyId);
+
+                    list.add(arrayMap1);
+
                 }
+                if(length>0)
+                {
+                    //Query
+                    boolean isLocalDbEmpty = Constants.isDbEmpty(getApplicationContext());
+                    if(isLocalDbEmpty){
+                        Constants.bulkInsertMedia(getApplicationContext(),list);
+                    }else {
+                        Constants.smartBulkInsert(getApplicationContext(),list);
+                    }
+                }
+
 
             }
 

@@ -14,15 +14,26 @@ import static net.simonvt.schematic.annotation.DataType.Type.TEXT;
  */
 
 public interface MediaColumns {
-    @DataType(INTEGER)
-    @AutoIncrement
+    @DataType(INTEGER) @PrimaryKey
     String _ID = "_id";
 
-    @DataType(TEXT) @PrimaryKey
-    String _PATH = "path";
+    @DataType(TEXT)
+    String _PATH = "_path";
 
-    @DataType(INTEGER) @NotNull
-    String _UPLOAD_STATUS = "upload_status";
+    @DataType(TEXT)
+    String _URL = "_url";
+
+    @DataType(INTEGER)
+    String _UPLOAD_STATUS = "_upload_status";
+
+    @DataType(INTEGER)
+    String _FROM_KINVEY = "_from_kinvey";
+
+    @DataType(INTEGER)
+    String _DOWN_STATUS = "_down_status";
+
+    @DataType(TEXT)
+    String _KINVEY_ID = "_kinvey_id";
 
 //    upload_status - fail(0),uploading(1),uploaded(2)
 }

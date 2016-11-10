@@ -82,6 +82,7 @@ public class FileUtility {
 
             if(fileName.startsWith("cam")){
                 mFileList.add(file);
+                Log.d("File path=",file.getPath());
             }
             ++i;
         }
