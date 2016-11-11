@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Selfie App</string>
+    <string name="app_name">Selfie</string>
     <string name="title_activity_login">Login</string>
     <string name="user_name">Username</string>
     <string name="password">Password</string>
@@ -26,6 +26,9 @@
     <string name="currentPos">currentPosition</string>
     <string name="enter_username">Enter username</string>
     <string name="enter_pass">Enter Password</string>
+    <string name="photo_taken">Photo is added</string>
+    <string name="video_added">Video Added</string>
+    <string name="camera_and_video_perm">Camera and Video Permission</string>
 
 
 </resources>

@@ -45,4 +45,6 @@ dependencies {
     compile 'net.simonvt.schematic:schematic:+'
     testCompile 'junit:junit:4.12'
     apt 'net.simonvt.schematic:schematic-compiler:+'
+    compile 'pub.devrel:easypermissions:0.2.1'
+
 }

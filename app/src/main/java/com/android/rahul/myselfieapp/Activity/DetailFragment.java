@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.MediaController;
+import android.widget.VideoView;
 
 import com.android.rahul.myselfieapp.R;
 import com.android.rahul.myselfieapp.Storage.MediaColumns;
@@ -24,8 +26,7 @@ public class DetailFragment extends Fragment {
 
     @Bind(R.id.tv)
     AppCompatTextView tv;
-    @Bind(R.id.image_view)
-    AppCompatImageView imageView;
+
 
     String TAG = "Detail Fragment";
 
@@ -45,7 +46,6 @@ public class DetailFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment DetailFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -69,34 +69,72 @@ public class DetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_detail, container, false);
-        ButterKnife.bind(this,v);
-
+        View v = null;
+        String url="";
+        String mPath="";
+        int mediaType = 0;
         Uri uri = MediaProvider.MediaLists.CONTENT_URI;
         String mSelection = MediaColumns._ID +" = ?";
         int id = mParam1;
+        int fromKinvey=0,downloadStatus=0,uploadedStatus=0;
         String mSelectionArgs[] = {String.valueOf(id)};
         Cursor cursor = getContext().getContentResolver().query(uri, null, mSelection, mSelectionArgs, null);
-
         if (cursor.moveToFirst()) {
             do {
 
                 String mId = cursor.getString(cursor.getColumnIndex(MediaColumns._ID));
-                String mPath = cursor.getString(cursor.getColumnIndex(MediaColumns._PATH));
-                int mStatus = cursor.getInt(cursor.getColumnIndex(MediaColumns._UPLOAD_STATUS));
-                String url = cursor.getString(cursor.getColumnIndex(MediaColumns._URL));
+                 mPath = cursor.getString(cursor.getColumnIndex(MediaColumns._PATH));
+                url = cursor.getString(cursor.getColumnIndex(MediaColumns._URL));
+                mediaType = cursor.getInt(cursor.getColumnIndex(MediaColumns._MEDIA_TYPE));
+                fromKinvey = cursor.getInt(cursor.getColumnIndex(MediaColumns._FROM_KINVEY));
+                downloadStatus = cursor.getInt(cursor.getColumnIndex(MediaColumns._DOWN_STATUS));
+                uploadedStatus = cursor.getInt(cursor.getColumnIndex(MediaColumns._UPLOAD_STATUS));
 
 
-                Log.d(TAG, "Query: mId:" + mId + ",mPath:" + mPath + ",status:" + mStatus+",url:"+url);
-
-                Glide.with(getContext()).load(url).into(imageView);
+                Log.d(TAG, "Query: mId:" + mId + ",mPath:" + mPath + ",status:" + uploadedStatus+",url:"+url);
 
             } while (cursor.moveToNext());
         }
         cursor.close();
+        if(mediaType ==0){
+             v =  inflater.inflate(R.layout.fragment_detail, container, false);
+        }else {
+            v =  inflater.inflate(R.layout.fragment_detail_video, container, false);
+        }
 
+        ButterKnife.bind(this,v);
+        if(mediaType==0){
+            AppCompatImageView imageView = (AppCompatImageView) v.findViewById(R.id.image_view);
+
+            if(fromKinvey==1 && downloadStatus==1){
+                Glide.with(getContext()).load(getContext().getFilesDir().getAbsolutePath()+"/"+mPath).into(imageView);
+            }else if(fromKinvey ==1 && downloadStatus ==0) {
+                Glide.with(getContext()).load(url).into(imageView);
+            }else if(fromKinvey ==0 )
+            {
+                Glide.with(getContext()).load(getContext().getFilesDir().getAbsolutePath()+"/"+mPath).into(imageView);
+                showReuploadOption();
+//            }else if(fromKinvey == 0 && uploadedStatus ==1) {
+//                Glide.with(getContext()).load(getContext().getFilesDir().getAbsolutePath()+"/"+mPath).into(imageView);
+            }
+
+
+        }else {
+            //load video from local file
+            VideoView mVideoView = (VideoView)v. findViewById(R.id.video_view);
+            String videoUri = getContext().getFilesDir().getAbsolutePath()+"/"+mPath;
+
+            mVideoView.setVideoURI(Uri.parse(videoUri));
+            mVideoView.setMediaController(new MediaController(getContext()));
+            mVideoView.requestFocus();
+            mVideoView.start();
+        }
 
         return v;
+    }
+
+    void showReuploadOption(){
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

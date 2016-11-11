@@ -39,7 +39,7 @@ public class Constants {
 
     public static final String API_KEY = "kid_S1w5ugKlg";
     public static final String APP_SECRET = "be2cfa240e9c48bb97cbb24bbd9f9c10";
-    public static final String COLLECTION = "Markets";
+    public static final String COLLECTION = "Content";
     public static final String DOWNLOAD_URL = "_downloadURL";
     public static final String FILE_NAME = "_filename";
     public static final String KINVEY_ID = "_kiinvey_id";
@@ -71,23 +71,30 @@ public class Constants {
     }
 
 
-    public static void uploadMediaFile(Context context, File file, String fileName,Client client){
+    public static void uploadMediaFile(Context context, File file, String fileName,Client client,int mediaType){
         try {
             byte data[] = Files.toByteArray(file);
-            uploadMediaByteArray(context,data,fileName,client);
+            uploadMediaByteArray(context,data,fileName,client,mediaType);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    public static void uploadMediaByteArray(Context context, byte data[], String fileName, Client client){
+    public static void uploadMediaByteArray(Context context,
+                                            byte data[],
+                                            String fileName,
+                                            Client client,
+                                            int mediaType
+    ){
 
         //Insertion
         int status = 0;//fail
         ContentValues cv = new ContentValues();
         cv.put(MediaColumns._PATH, fileName);
         cv.put(MediaColumns._UPLOAD_STATUS, status);
+        cv.put(MediaColumns._MEDIA_TYPE, mediaType);
+
         Uri insertUri = context.getContentResolver().insert(MediaProvider.MediaLists.CONTENT_URI, cv);
         Log.d("uploadNedia","new InsertUri:"+insertUri);
 

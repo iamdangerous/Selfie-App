@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.android.rahul.myselfieapp.R;
+import com.android.rahul.myselfieapp.Utility.Constants;
 import com.android.rahul.myselfieapp.Utility.FileUtility;
 import com.android.rahul.myselfieapp.Views.CameraPreview;
 
@@ -45,7 +46,7 @@ public class VideoFragment extends Fragment {
     private boolean isRecording = false;
 
     VideoFragmentListener mListener;
-
+    File file;
 
     @Bind(R.id.camera_preview)
     FrameLayout frameLayout;
@@ -73,12 +74,13 @@ public class VideoFragment extends Fragment {
 //            btnCapture.setText(getString(R.string.start));
             btnCapture.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.colorAccent));
             isRecording = false;
+//            Constants.uploadMediaFile(getContext(),file,file.getName(),mC);
+            mListener.saveVideoFile(file,file.getName());
         }else {
             if (prepareVideoRecorder()) {
                 // Camera is available and unlocked, MediaRecorder is prepared,
                 // now you can start recording
                 mediaRecorder.start();
-
                 // inform the user that recording has started
 //                btnCapture.setText(getString(R.string.stop));
                 btnCapture.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.colorPrimaryDark));
@@ -179,7 +181,7 @@ public class VideoFragment extends Fragment {
 
         filename=filename.replaceAll(" ", "_")+".mp4";
 
-        File file = new File(getContext().getFilesDir(), filename);
+         file = new File(getContext().getFilesDir(), filename);
         try {
             boolean fileCreated = file.createNewFile();
             Log.d(TAG,"fileCreated:"+fileCreated);
@@ -195,6 +197,7 @@ public class VideoFragment extends Fragment {
 
         // Step 6: Prepare configured MediaRecorder
         try {
+            mediaRecorder.setOrientationHint(90);
             mediaRecorder.prepare();
         } catch (IllegalStateException e) {
             Log.d(TAG, "IllegalStateException preparing MediaRecorder: " + e.getMessage());
@@ -238,5 +241,6 @@ public class VideoFragment extends Fragment {
     //
     public interface VideoFragmentListener {
         void showCameraFragment();
+        void saveVideoFile(File file, String fileName);
     }
 }

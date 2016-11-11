@@ -1,11 +1,14 @@
 package com.android.rahul.myselfieapp.Activity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
@@ -23,11 +26,14 @@ import com.kinvey.java.core.KinveyClientCallback;
 import com.kinvey.java.core.KinveyJsonError;
 import com.kinvey.java.core.KinveyJsonResponseException;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity  implements EasyPermissions.PermissionCallbacks {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
@@ -43,6 +49,11 @@ public class LoginActivity extends BaseActivity {
 
 
     Client client;
+    String[] perms = {Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    int REQUEST_CODE = 100;
 
     private static final String TAG = "LoginActivity";
 
@@ -107,6 +118,33 @@ public class LoginActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });
+        askPermission();
+
+    }
+
+    void askPermission(){
+
+
+        int permissionCheckCamera = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
+
+        int permissionCheckMic = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO);
+
+        int permissionCheckStorage = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if(permissionCheckCamera == PackageManager.PERMISSION_GRANTED ||
+                permissionCheckMic == PackageManager.PERMISSION_GRANTED||
+                permissionCheckStorage == PackageManager.PERMISSION_GRANTED)
+            {
+
+        }else {
+            EasyPermissions.requestPermissions(this, getString(R.string.camera_and_video_perm),
+                    REQUEST_CODE , perms);
+        }
+
+
 
     }
 
@@ -154,4 +192,22 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        Log.d(TAG,"permission granted");
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        Log.d(TAG,"permission denied");
+    }
 }

@@ -27,13 +27,17 @@ public interface MediaColumns {
     String _UPLOAD_STATUS = "_upload_status";
 
     @DataType(INTEGER)
-    String _FROM_KINVEY = "_from_kinvey";
+    String _FROM_KINVEY = "_from_kinvey"; //1 & 0
 
     @DataType(INTEGER)
-    String _DOWN_STATUS = "_down_status";
+    String _DOWN_STATUS = "_down_status"; //1 & 0
 
     @DataType(TEXT)
     String _KINVEY_ID = "_kinvey_id";
+
+    @DataType(INTEGER) @NotNull     //0:image & 1 : video
+    String _MEDIA_TYPE = "_media_type";
+
 
 //    upload_status - fail(0),uploading(1),uploaded(2)
 }

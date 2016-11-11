@@ -3,8 +3,10 @@ package com.android.rahul.myselfieapp.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,6 +14,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.database.Cursor;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import com.android.rahul.myselfieapp.Adapter.GalleryAdapter;
 import com.android.rahul.myselfieapp.Adapter.GalleryCursorAdapter;
 import com.android.rahul.myselfieapp.Entity.UpdateEntity;
@@ -32,10 +37,21 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class GalleryActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @Bind(R.id.recycler_view)    RecyclerView recyclerView;
+    @Bind(R.id.fab)
+    FloatingActionButton fab;
+
+    String TAG = "GalleryActivity";
+
+    @OnClick(R.id.fab)
+    void onClickFab(){
+        Intent intent = new Intent(this,CameraActivity.class);
+        startActivity(intent);
+    }
 
     private static final int LOADER_ID = 1;
 
@@ -103,5 +119,43 @@ public class GalleryActivity extends BaseActivity implements LoaderManager.Loade
                 break;
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_gallery, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_1:
+                performSignOut();
+                break;
+            default:
+        }
+        return true;
+    }
+
+    void performSignOut(){
+        mClient.user().logout().execute();
+        clearStorage();
+        showLoginScreen();
+    }
+
+    void clearStorage() {
+        //empty Db
+        Uri uri = MediaProvider.MediaLists.CONTENT_URI;
+        int rowsDeleted = getContentResolver().delete(uri, null, null);
+        Log.d(TAG, "rowsDeleted:" + rowsDeleted);
+        //empty images and Videos
+        FileUtility.deleteMediaFiles(getApplicationContext());
+    }
+
+    void showLoginScreen() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finishAffinity();
     }
 }

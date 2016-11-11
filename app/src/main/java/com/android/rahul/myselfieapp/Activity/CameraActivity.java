@@ -16,6 +16,8 @@ import com.android.rahul.myselfieapp.Service.MyUploadService;
 import com.android.rahul.myselfieapp.Utility.Constants;
 import com.kinvey.android.Client;
 
+import java.io.File;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -77,12 +79,8 @@ public class CameraActivity extends BaseActivity implements
 
     @Override
     public void uploadMediaImage(byte[] data,String fileName) {
-//        Intent msgIntent = new Intent(this, MyUploadService.class);
-//        msgIntent.putExtra(getString(R.string.entity), updateEntity);
-//        startService(msgIntent);
-//        MyUploadService myUploadService = new MyUploadService(mClient);
-        MyUploadService myUploadService = new MyUploadService(mClient);
-        Constants.uploadMediaByteArray(getApplicationContext(),data,fileName,mClient);
+        Constants.uploadMediaByteArray(getApplicationContext(),data,fileName,mClient,0);
+        Constants.showAwesomeToast(getApplicationContext(),getString(R.string.photo_taken));
     }
 
     @Override
@@ -97,5 +95,12 @@ public class CameraActivity extends BaseActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, MyImageFragment.newInstance())
                 .commit();
+    }
+
+    @Override
+    public void saveVideoFile(File file, String fileName) {
+        Constants.uploadMediaFile(getApplicationContext(),file,fileName,mClient,1);
+        Constants.showAwesomeToast(getApplicationContext(),getString(R.string.video_added));
+
     }
 }
