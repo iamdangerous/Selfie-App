@@ -25,7 +25,6 @@ public class MyUploadService extends IntentService {
 //    public static final int MEDIA_FILE = 1;
 //    public static final int  MEDIA_BYTE = 2;
 
-    public static final String COLLECTION_NAME = "Markets";
 
 
     private  Client mClient;
@@ -108,7 +107,7 @@ public class MyUploadService extends IntentService {
 
         MyApplication myApplication = (MyApplication) getApplication();
         mClient = myApplication.getClient();
-        mClient.linkedData(COLLECTION_NAME,UpdateEntity.class)
+        mClient.linkedData(Constants.COLLECTION,UpdateEntity.class)
                 .save(entity, new KinveyClientCallback<UpdateEntity>() {
                     @Override
                     public void onSuccess(UpdateEntity updateEntity) {
