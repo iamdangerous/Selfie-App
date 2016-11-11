@@ -1,9 +1,11 @@
 package com.android.rahul.myselfieapp.Activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.android.rahul.myselfieapp.R;
+import com.android.rahul.myselfieapp.Utility.Constants;
 import com.kinvey.android.Client;
 import com.kinvey.java.User;
 import com.kinvey.java.core.KinveyClientCallback;
@@ -33,10 +36,17 @@ public class LoginActivity extends BaseActivity {
     @Bind(R.id.et_user)    AppCompatEditText etUser;
     @Bind(R.id.et_pass) AppCompatEditText etPass;
 
+    @Bind(R.id.til_user)
+    TextInputLayout tilUser;
+    @Bind(R.id.til_pass)
+    TextInputLayout tilPass;
+
+
     Client client;
 
     private static final String TAG = "LoginActivity";
 
+    ProgressDialog progressDialog;
 
     @OnClick(R.id.btn_sign_in)
     void onClickBtnSignIn(){
@@ -44,7 +54,25 @@ public class LoginActivity extends BaseActivity {
         String userName = etUser.getText().toString();
         String password = etPass.getText().toString();
 
+
+        if(!checkValidInputs(userName,password))
+            return;
+
+        progressDialog.show();
         performSignIn(userName,password);
+    }
+
+    boolean checkValidInputs(String userName,String password){
+        if(userName.isEmpty()){
+            tilUser.setError(getString(R.string.enter_username));
+            return false;
+        }
+
+        if(password.isEmpty()){
+            tilPass.setError(getString(R.string.enter_pass));
+            return false;
+        }
+        return true;
     }
 
 
@@ -53,6 +81,10 @@ public class LoginActivity extends BaseActivity {
         String userName = etUser.getText().toString();
         String password = etPass.getText().toString();
 
+        if(!checkValidInputs(userName,password))
+            return;
+
+        progressDialog.show();
         performSignUp(userName,password);
     }
 
@@ -79,7 +111,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private  void showMainActivity(){
-        Intent intent = new Intent(this,MainActivity.class);
+        Intent intent = new Intent(this,GalleryActivity.class);
         startActivity(intent);
         finish();
     }
@@ -87,7 +119,13 @@ public class LoginActivity extends BaseActivity {
     private void init(){
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Connecting");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setProgress(10);
+        progressDialog.setCancelable(false);
+        //progressDialog.setIndeterminate(true);
     }
 
     private void performSignIn(String userName,String password){
@@ -102,6 +140,7 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void onSuccess(User user) {
 
+            progressDialog.dismiss();
             Log.d(TAG,"success");
             showMainActivity();
 
@@ -109,12 +148,8 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable throwable) {
+            progressDialog.dismiss();
             Log.d(TAG,"Fail");
-//            throwable.m
-//                    if(throwable instanceof KinveyJsonResponseException){
-//                        KinveyJsonError kinveyJsonError = ((KinveyJsonResponseException)throwable).getDetails();
-//                        kinveyJsonError.get()
-//                    }
             Toast.makeText(getApplicationContext(),throwable.getMessage(),Toast.LENGTH_SHORT).show();
         }
     };

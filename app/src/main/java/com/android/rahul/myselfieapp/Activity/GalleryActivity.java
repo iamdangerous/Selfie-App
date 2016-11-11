@@ -14,10 +14,17 @@ import android.util.Log;
 import android.database.Cursor;
 import com.android.rahul.myselfieapp.Adapter.GalleryAdapter;
 import com.android.rahul.myselfieapp.Adapter.GalleryCursorAdapter;
+import com.android.rahul.myselfieapp.Entity.UpdateEntity;
 import com.android.rahul.myselfieapp.R;
 import com.android.rahul.myselfieapp.Storage.MediaProvider;
+import com.android.rahul.myselfieapp.Utility.Constants;
 import com.android.rahul.myselfieapp.Utility.FileUtility;
+import com.google.api.client.util.ArrayMap;
+import com.kinvey.android.AsyncAppData;
 import com.kinvey.android.Client;
+import com.kinvey.android.callback.KinveyListCallback;
+import com.kinvey.java.cache.CachePolicy;
+import com.kinvey.java.cache.InMemoryLRUCache;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,7 +39,6 @@ public class GalleryActivity extends BaseActivity implements LoaderManager.Loade
 
     private static final int LOADER_ID = 1;
 
-//    GalleryAdapter adapter;
     GalleryCursorAdapter mCursorAdapter;
     List<File> fileList;
     Client mClient;
@@ -51,8 +57,11 @@ public class GalleryActivity extends BaseActivity implements LoaderManager.Loade
         setAdapter();
         getLoaderManager().initLoader(LOADER_ID, null,this);
 
+        Constants.getDataFromKinvey(mClient,getApplicationContext());
 
     }
+
+
 
     private void setAdapter(){
 //        adapter = new GalleryAdapter(this,fileList,mClient);

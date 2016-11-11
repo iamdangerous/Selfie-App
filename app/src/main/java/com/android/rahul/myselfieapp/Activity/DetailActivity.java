@@ -39,8 +39,9 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         int totalItems = cursor.getCount();
         cursor.close();
-        adapter = new DetailViewPagerAdapter(getSupportFragmentManager(),getApplicationContext(),totalItems,curPos);
+        adapter = new DetailViewPagerAdapter(getSupportFragmentManager(),getApplicationContext(),totalItems);
         viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(curPos);
     }
 
     @Override

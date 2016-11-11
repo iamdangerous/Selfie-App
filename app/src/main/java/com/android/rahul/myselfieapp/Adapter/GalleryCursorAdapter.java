@@ -57,7 +57,6 @@ public class GalleryCursorAdapter extends CursorRecyclerViewAdapter<GalleryCurso
             String filePath = cursor.getString(cursor.getColumnIndex(MediaColumns._PATH));
             File file =new File(context.getFilesDir().getAbsolutePath()+"/"+filePath);
             Glide.with(context).load(file).into(viewHolder.imageView);
-
         }
 
         viewHolder.imageView.setOnClickListener(new View.OnClickListener() {

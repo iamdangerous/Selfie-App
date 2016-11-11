@@ -16,22 +16,21 @@ import com.android.rahul.myselfieapp.Fragment.VideoFragment;
 public class DetailViewPagerAdapter extends FragmentPagerAdapter {
 
     Context context;
-    int items,currentPos;
+    int items;
 
     public DetailViewPagerAdapter(FragmentManager fm,
                                   Context context,
-                                  int items,
-                                  int currentPos) {
+                                  int items
+                                  ) {
         super(fm);
         this.context = context;
         this.items = items;
-        this.currentPos = currentPos;
     }
 
     @Override
     public Fragment getItem(int position) {
 
-        return    DetailFragment.newInstance(currentPos+position);
+        return    DetailFragment.newInstance(position+1);
     }
 
     @Override

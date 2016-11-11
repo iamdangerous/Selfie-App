@@ -18,12 +18,17 @@ import com.android.rahul.myselfieapp.Storage.MediaColumns;
 import com.android.rahul.myselfieapp.Storage.MediaProvider;
 import com.google.api.client.util.ArrayMap;
 import com.google.common.io.Files;
+import com.kinvey.android.AsyncAppData;
 import com.kinvey.android.Client;
+import com.kinvey.android.callback.KinveyListCallback;
 import com.kinvey.java.LinkedResources.LinkedFile;
+import com.kinvey.java.cache.CachePolicy;
+import com.kinvey.java.cache.InMemoryLRUCache;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -199,5 +204,52 @@ public class Constants {
         }
         int rowsInserted = context.getContentResolver().bulkInsert(uri,contentValues);
         Log.d("Constants:","bulkInsert New Rows Inserted:"+rowsInserted);
+    }
+
+    public static void getDataFromKinvey(Client mClient, final Context context){
+        AsyncAppData<UpdateEntity> entityAsyncAppData = mClient.appData(Constants.COLLECTION, UpdateEntity.class);
+        entityAsyncAppData.setCache(new InMemoryLRUCache(), CachePolicy.CACHEFIRST);
+        entityAsyncAppData.get(new KinveyListCallback<UpdateEntity>() {
+            @Override
+            public void onSuccess(UpdateEntity[] updateEntities) {
+                Log.v("TAG", "received " + updateEntities.length + " events");
+
+                int length = updateEntities.length;
+                List<ArrayMap<String,String>> list = new ArrayList<ArrayMap<String, String>>();
+                for (int i = 0; i < updateEntities.length; ++i) {
+                    String entityId = String.valueOf(updateEntities[i].get("_id"));
+                    ArrayMap<String,String> arrayMap =(ArrayMap<String, String>) updateEntities[i].get("attachment");
+                    String downloadUrl  = arrayMap.get(Constants.DOWNLOAD_URL);
+                    String fileName = arrayMap.get(Constants.FILE_NAME);
+                    String kinveyId = entityId;
+
+                    Log.v("TAG", "downloadUrl " + downloadUrl + ",fileName:" + fileName);
+                    ArrayMap<String,String> arrayMap1 = new ArrayMap<String, String>();
+                    arrayMap1.add(Constants.DOWNLOAD_URL,downloadUrl);
+                    arrayMap1.add(Constants.FILE_NAME,fileName);
+                    arrayMap1.add(Constants.KINVEY_ID,kinveyId);
+
+                    list.add(arrayMap1);
+
+                }
+                if(length>0)
+                {
+                    //Query
+                    boolean isLocalDbEmpty = Constants.isDbEmpty(context);
+                    if(isLocalDbEmpty){
+                        Constants.bulkInsertMedia(context,list);
+                    }else {
+                        Constants.smartBulkInsert(context,list);
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.e("TAG", "failed to fetch all", throwable);
+            }
+        });
     }
 }

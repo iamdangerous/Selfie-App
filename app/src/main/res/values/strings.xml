@@ -24,6 +24,8 @@
     <string name="gallery">Gallery</string>
     <string name="detail_actity">detail_activity</string>
     <string name="currentPos">currentPosition</string>
+    <string name="enter_username">Enter username</string>
+    <string name="enter_pass">Enter Password</string>
 
 
 </resources>
