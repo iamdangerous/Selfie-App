@@ -21,6 +21,9 @@
     <string name="camera">Camera</string>
     <string name="start">Start</string>
     <string name="sign_out">Sign Out</string>
+    <string name="gallery">Gallery</string>
+    <string name="detail_actity">detail_activity</string>
+    <string name="currentPos">currentPosition</string>
 
 
 </resources>

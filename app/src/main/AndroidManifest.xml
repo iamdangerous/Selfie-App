@@ -33,7 +33,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Activity.MainActivity"></activity>
+        <activity android:name=".Activity.MainActivity" />
         <activity android:name=".Activity.BaseActivity" />
         <activity
             android:name=".Activity.LoginActivity"
@@ -55,21 +55,23 @@
                 android:value="com.android.rahul.myselfieapp.Activity.LoginActivity" />
         </activity>
         <activity
+            android:name=".Activity.CameraActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:name=".Activity.CameraActivity"></activity>
-
-
-        <activity android:name=".Activity.GalleryActivity" />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activity.GalleryActivity"
+            android:label="@string/gallery"></activity>
 
         <service
             android:name=".Service.MyUploadService"
-            android:exported="false"/>
+            android:exported="false" />
+
         <provider
             android:name=".Storage.generated.MediaProvider"
             android:authorities="com.android.rahul.myselfieapp.storage.MediaProvider"
             android:exported="false" />
 
+        <activity android:name=".Activity.DetailActivity"></activity>
     </application>
 
 </manifest>

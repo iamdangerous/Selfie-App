@@ -1,6 +1,7 @@
 package com.android.rahul.myselfieapp.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.rahul.myselfieapp.Activity.DetailActivity;
 import com.android.rahul.myselfieapp.R;
 import com.bumptech.glide.Glide;
 import com.kinvey.android.Client;
@@ -43,14 +45,18 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final File file = stringList.get(position);
         Glide.with(context).load(file).into(holder.imageView);
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                client.file().upload(file,uploaderProgressListener);
+//                client.file().upload(file,uploaderProgressListener);
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.setAction(context.getString(R.string.detail_actity));
+                intent.putExtra(context.getString(R.string.currentPos),holder.getAdapterPosition());
+                context.startActivity(intent);
             }
         });
     }

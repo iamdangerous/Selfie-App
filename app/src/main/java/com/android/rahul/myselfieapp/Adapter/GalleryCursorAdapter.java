@@ -1,6 +1,7 @@
 package com.android.rahul.myselfieapp.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.AppCompatImageView;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.rahul.myselfieapp.Activity.DetailActivity;
 import com.android.rahul.myselfieapp.R;
 import com.android.rahul.myselfieapp.Storage.MediaColumns;
 import com.bumptech.glide.Glide;
@@ -44,7 +46,7 @@ public class GalleryCursorAdapter extends CursorRecyclerViewAdapter<GalleryCurso
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
+    public void onBindViewHolder(final ViewHolder viewHolder, Cursor cursor) {
 //        MyListItem myListItem = MyListItem.fromCursor(cursor);
 //        viewHolder.mTextView.setText(myListItem.getName());
         int fromKinvey = cursor.getInt(cursor.getColumnIndex(MediaColumns._FROM_KINVEY));
@@ -57,6 +59,16 @@ public class GalleryCursorAdapter extends CursorRecyclerViewAdapter<GalleryCurso
             Glide.with(context).load(file).into(viewHolder.imageView);
 
         }
+
+        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.setAction(context.getString(R.string.detail_actity));
+                intent.putExtra(context.getString(R.string.currentPos),viewHolder.getAdapterPosition());
+                context.startActivity(intent);
+            }
+        });
 
 
     }
